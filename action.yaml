@@ -16,6 +16,9 @@ inputs:
         description: "What's the changelog file's name including extension (recommended .md)"
         required: false
         default: "CHANGELOG.md"
+outputs:
+    generated_changelog:
+        description: "If true, it means we generated a changelog and need to push changes"
 runs:
     using: 'docker'
     image: 'Dockerfile'
