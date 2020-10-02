@@ -24,6 +24,7 @@ print(api_url)
 
 r = requests.get(api_url)
 data = json.loads(r.text)
+print(data)
 
 document = Document(FILE_NAME)
 change = Change(data)
