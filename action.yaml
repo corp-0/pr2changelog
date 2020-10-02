@@ -2,9 +2,6 @@ name: "pr2changelog"
 author: "Andrés Riquelme <andresfranco.rs@gmail.com>"
 description: "Generates a changelog when a PR is merged based on a short description given by the PR author."
 inputs:
-    github_token:
-        description: "Github auth token"
-        required: true
     repo:
         description: "Name of this repository in format 'someone/repo'"
         required: true

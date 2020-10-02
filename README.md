@@ -27,9 +27,28 @@ jobs:
         name: changelog generator
         runs-on: ubuntu-latest
         steps:
-            - uses: corp-0/pr2changelog
+            
+            - name: Checkout repository
+              uses: actions/checkout@v2
               with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  fetch-depth: 0
+                  
+            - name: Generate changelog
+              uses: corp-0/pr2changelog@master
+              with:
+                  repo: ${{ github.repository }}
+                  pr_number: ${{ github.event.pull_request.number }}
+                  
+            -   name: Commit files
+                run: |
+                    git config --local user.email "action@github.com"
+                    git config --local user.name "GitHub Action"
+                    git commit -m "Add changes" -a
+            -   name: Push changes
+                uses: ad-m/github-push-action@master
+                with:
+                    github_token: ${{ secrets.GITHUB_TOKEN }}
+
 ```
 
 Now add the changelog short description to your PRS like this
