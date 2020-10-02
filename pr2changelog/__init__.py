@@ -1,5 +1,8 @@
 import os
+import json
+import requests
 from .document import Document
+from .change import Change
 
 __version__ = '0.1.0'
 
@@ -15,4 +18,8 @@ except KeyError:
     print("Something is wrong with envs!")
     raise KeyError
 
+r = requests.get(f"https://api.github.com/repos/{REPO}/pulls/{PR_NUMBER}")
+data = json.loads(r.text)
+
 document = Document(FILE_NAME)
+change = Change(data)

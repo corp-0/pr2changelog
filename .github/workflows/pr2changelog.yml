@@ -14,16 +14,11 @@ jobs:
         name: changelog generator
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout repository
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: Generate changelog
+              uses: corp-0/pr2changelog@master
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  fetch-depth: 0
-
-                  - name: create changelog file
-                    uses: ./
-
-                  - name: upload artifcat
-                    uses: actions/upload-artifact@v2
-                    with:
-                        name: changelog
-                        path: /home/runner/work/_temp/_github_home/CHANGELOG.md
