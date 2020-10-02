@@ -1,8 +1,9 @@
 import pr2changelog as cl
 from os import system
 
-document = cl.document
 changes = cl.change
+if changes.change_lines:
+    document = cl.document
 
 
 def main():
@@ -12,15 +13,16 @@ def main():
         return
 
     write_new_changes()
+    system('echo "::set-output name=generated_changelog::1"')
 
 
 def write_new_changes():
     for new_change in changes.change_lines:
         print(f"Found new change: {new_change}")
-        document.add_record(new_change)
-        system('echo "::set-output name=generated_changelog::1"')
+
+    for formatted_change in changes.get_changes():
+        document.add_record(formatted_change)
 
 
 if __name__ == "__main__":
     main()
-#:0
