@@ -1,0 +1,32 @@
+name: "pr2changelog"
+author: "Andrés Riquelme <andresfranco.rs@gmail.com>"
+description: "Generates a changelog when a PR is merged based on a short description given by the PR author."
+inputs:
+    github_token:
+        description: "Github auth token"
+        required: true
+    repo:
+        description: "Name of this repository in format 'someone/repo'"
+        required: false
+        default: ${{ github.repository }}
+    pr_number:
+        description: "Use ${{ github.event.pull_request.number }} to get the current pr number"
+        required: false
+        default: ${{ github.event.pull_request.number }}
+    change_token:
+        description: "Regex will search for this string to find change lines. Default is CL:"
+        required: false
+        default: "CL:"
+    file_name:
+        description: "What's the changelog file's name including extension (recommended .md)"
+        required: false
+        default: "CHANGELOG.md"
+outputs:
+    changelog:
+        description: "A changelog markdown file added to the repo root."
+runs:
+    using: 'docker'
+    image: 'Dockerfile'
+branding:
+    icon: 'edit'
+    color: 'purple'

@@ -1,0 +1,29 @@
+name: pr2changelog
+on:
+#    pull_request:
+#        branches:
+#            - master
+#        types: [closed]
+    push:
+        branches:
+            - master
+jobs:
+    generate:
+        if: github.event.pull_request.merged == true
+
+        name: changelog generator
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  fetch-depth: 0
+
+                  - name: create changelog file
+                    uses: ./
+
+                  - name: upload artifcat
+                    uses: actions/upload-artifact@v2
+                    with:
+                        name: changelog
+                        path: /home/runner/work/_temp/_github_home/CHANGELOG.md
