@@ -9,7 +9,7 @@ inputs:
         description: "Name of this repository in format 'someone/repo'"
         required: true
     pr_number:
-        description: "Use ${{ github.event.pull_request.number }} to get the current pr number"
+        description: "Use github.event.pull_request.number to get the current pr number"
         required: true
     change_token:
         description: "Regex will search for this string to find change lines. Default is CL:"
