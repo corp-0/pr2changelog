@@ -17,8 +17,8 @@ inputs:
         required: false
         default: "CHANGELOG.md"
 outputs:
-    changelog:
-        description: "A changelog markdown file added to the repo root."
+    generated_changelog:
+        description: "if true the next step will run and upload the generated changelog to the repo"
 runs:
     using: 'docker'
     image: 'Dockerfile'
