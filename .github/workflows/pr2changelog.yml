@@ -26,7 +26,7 @@ jobs:
                   pr_number: ${{ github.event.pull_request.number }}
 
             -   name: Commit files
-                if: ${{ steps.pr2changelog.outputs.generated_changelog }}
+                if: ${{ steps.pr2changelog.outputs.generated_changelog == 1}}
                 run: |
                     git config --local user.email "action@github.com"
                     git config --local user.name "GitHub Action"
