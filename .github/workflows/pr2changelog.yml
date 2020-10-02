@@ -19,13 +19,14 @@ jobs:
                   fetch-depth: 0
 
             - name: pr2changelog
+              id: pr2changelog
               uses: corp-0/pr2changelog@master
               with:
                   repo: ${{ github.repository }}
                   pr_number: ${{ github.event.pull_request.number }}
 
             -   name: Commit files
-                if: ${{ $GENERATED_CHANGELOG == "true" }}
+                if: ${{ steps.pr2changelog.outputs.generated_changelog }}
                 run: |
                     git config --local user.email "action@github.com"
                     git config --local user.name "GitHub Action"
