@@ -16,7 +16,7 @@ class Change:
         self.author_name = pr_data['user']['login']
         self.author_url = pr_data['user']['url']
         self.pr_number = pr_data['number']
-        self.pr_url = pr_data['url']
+        self.pr_url = pr_data['html_url']
         self.change_lines = self.parse_changes(pr_data['body'])
 
     def format_change_line(self, line: str):
