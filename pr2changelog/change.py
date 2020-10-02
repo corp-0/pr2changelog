@@ -29,7 +29,7 @@ class Change:
     def parse_changes(self, pr_body: str):
         regex = f"^{self.change_token}.+$"
         matches = re.finditer(regex, pr_body, re.MULTILINE)
-        changes = [(i.group()).replace("CL:", "") + "\n" for i in matches]
+        changes = [(i.group()).replace("CL:", "") for i in matches]
 
         return changes
 
