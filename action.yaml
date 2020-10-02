@@ -7,12 +7,10 @@ inputs:
         required: true
     repo:
         description: "Name of this repository in format 'someone/repo'"
-        required: false
-        default: ${{ github.repository }}
+        required: true
     pr_number:
         description: "Use ${{ github.event.pull_request.number }} to get the current pr number"
-        required: false
-        default: ${{ github.event.pull_request.number }}
+        required: true
     change_token:
         description: "Regex will search for this string to find change lines. Default is CL:"
         required: false

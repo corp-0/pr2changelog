@@ -20,3 +20,5 @@ jobs:
               uses: corp-0/pr2changelog@master
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
+                  repo: ${{ github.repository }}
+                  pr_number: ${{ github.event.pull_request.number }}
