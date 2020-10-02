@@ -1,12 +1,10 @@
 name: pr2changelog
 on:
-#    pull_request:
-#        branches:
-#            - master
-#        types: [closed]
-    push:
+    pull_request:
         branches:
             - master
+        types: [closed]
+
 jobs:
     generate:
         if: github.event.pull_request.merged == true
