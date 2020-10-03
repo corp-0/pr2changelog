@@ -26,4 +26,3 @@ def write_new_changes():
 
 if __name__ == "__main__":
     main()
-#wea
