@@ -3,6 +3,23 @@ from .markdown import Markdown
 import re
 
 
+def fix_wrong_url(text):
+    wrong_user_patt = r"(https:\/\/api.github.com\/users\/(.+))\)\s"
+    wrong_pr_patt = r"(https:\/\/api.github.com\/repos\/(\w+\/\w+)\/pulls\/(\d+))"
+
+    user_match = re.search(wrong_user_patt, text)
+    pr_match = re.search(wrong_pr_patt, text)
+
+    if user_match is not None:
+        text = text.replace(user_match.groups()[0], f"https://github.com/{user_match.groups()[1]}")
+
+    if pr_match is not None:
+        text = text.replace(pr_match.groups()[0],
+                            f"https://github.com/{pr_match.groups()[1]}/pull/{pr_match.groups()[2]}")
+
+    return text
+
+
 class Document:
     """Object that represents the changelog file and all related operations"""
     changelog_content: list
@@ -35,7 +52,7 @@ class Document:
         if previous_records:
             for rec in previous_records:
                 if "api.github" in rec:
-                    rec = self.fix_wrong_url(rec)
+                    rec = fix_wrong_url(rec)
                 self.append_to_file(rec)
 
     def append_to_file(self, text):
@@ -45,19 +62,3 @@ class Document:
     def clear_file(self):
         with open(self.file_name, 'w'):
             pass
-
-    def fix_wrong_url(self, text):
-        wrong_user_patt = r"(https:\/\/api.github.com\/users\/(.+))\)\s"
-        wrong_pr_patt = r"(https:\/\/api.github.com\/repos\/(\w+\/\w+)\/pulls\/(\d+))"
-
-        user_match = re.search(wrong_user_patt, text)
-        pr_match = re.search(wrong_pr_patt, text)
-
-        if user_match is not None:
-            text = text.replace(user_match.groups()[0], f"https://github.com/{user_match.groups()[1]}")
-
-        if pr_match is not None:
-            text = text.replace(pr_match.groups()[0],
-                                f"https://github.com/{pr_match.groups()[1]}/pull/{pr_match.groups()[2]}")
-
-        return text
