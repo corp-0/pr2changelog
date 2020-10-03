@@ -5,7 +5,7 @@ import re
 
 def fix_wrong_url(text):
     wrong_user_patt = r"(https:\/\/api.github.com\/users\/(.+))\)\s"
-    wrong_pr_patt = r"(https:\/\/api.github.com\/repos\/(\w+\/\w+)\/pulls\/(\d+))"
+    wrong_pr_patt = r"(https:\/\/api.github.com\/repos\/(.+/.+)/pulls/(\d+))"
 
     user_match = re.search(wrong_user_patt, text)
     pr_match = re.search(wrong_pr_patt, text)
