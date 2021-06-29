@@ -6,7 +6,8 @@ import main
 
 
 # TODO improve these tests, I'm too lazy now!
-@mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": "data/merged.json", "INPUT_FILENAME": ".MockUpFile"}, clear=True)
+@mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": "tests/data/merged.json", "INPUT_FILENAME": ".MockUpFile"},
+                 clear=True)
 class IntegrationTest(unittest.TestCase):
     def test_default_options(self):
         try:

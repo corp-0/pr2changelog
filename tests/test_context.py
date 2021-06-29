@@ -13,7 +13,7 @@ unrelated shit
 CL:[New] new shit"""
 
 
-@mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": "data/merged.json"}, clear=True)
+@mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": "tests/data/merged.json"}, clear=True)
 class ConfigurationTest(unittest.TestCase):
 
     def test_required_env(self):

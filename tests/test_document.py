@@ -19,9 +19,9 @@ class DocumentTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        with open("data/test_CHANGELOG.md", 'r', encoding='UTF-8') as f:
+        with open("tests/data/test_CHANGELOG.md", 'r', encoding='UTF-8') as f:
             cls.result = f.read()
-        with open("data/test_CHANGELOG_2.md", 'r', encoding='UTF-8') as f:
+        with open("tests/data/test_CHANGELOG_2.md", 'r', encoding='UTF-8') as f:
             cls.result2 = f.read()
 
     def test_creates_when_missing_file(self):
