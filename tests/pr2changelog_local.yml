@@ -3,11 +3,9 @@ on:
     pull_request_target:
         branches:
             - master
-            - develop
         types:
             - closed
             - edited
-            - opened
 
 jobs:
     dry_check:
@@ -17,6 +15,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+            -   run: echo testing dry_check
             -   name: Checkout repository
                 uses: actions/checkout@v2
                 with:
@@ -24,17 +23,19 @@ jobs:
 
             -   name: pr2changelog
                 id: pr2changelog
-                uses: corp-0/pr2changelog@master
+                run: python main.py
                 with:
                     categories: Fix;New;Improvement
+            -   run: echo ${{ steps.pr2changelog.outputs.changelog_content }}
 
     after_merge:
-        if: github.event.pull_request.merged == true && github.ref == 'refs/heads/master'
+        if: github.event.pull_request.merged == true
 
         name: changelog generator
         runs-on: ubuntu-latest
 
         steps:
+            -   run: echo testing after merge job
             -   name: Checkout repository
                 uses: actions/checkout@v2
                 with:
@@ -42,19 +43,7 @@ jobs:
 
             -   name: pr2changelog
                 id: pr2changelog
-                uses: corp-0/pr2changelog@master
+                run: python main.py
                 with:
                     categories: Fix;New;Improvement
-
-            -   name: Commit files
-                if: ${{ steps.pr2changelog.outputs.generated_changelog == 1}}
-                run: |
-                    git config --local user.email "action@github.com"
-                    git config --local user.name "GitHub Action"
-                    git add *
-                    git commit -m "misc: update Changelog" -a
-            -   name: Push changes
-                if: ${{ steps.pr2changelog.outputs.generated_changelog == 1}}
-                uses: ad-m/github-push-action@master
-                with:
-                    github_token: ${{ secrets.GITHUB_TOKEN }}
+            -   run: echo ${{ steps.pr2changelog.outputs.changelog_content }}
