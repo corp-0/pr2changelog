@@ -10,7 +10,7 @@ inputs:
     change_token:
         description: "Regex will search for this string to find change lines. Default is CL:"
         required: false
-        default: "CL:"
+        default: "CL"
     file_name:
         description: "What's the changelog file's name including extension (recommended .md)"
         required: false
