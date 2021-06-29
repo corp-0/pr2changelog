@@ -10,7 +10,7 @@ on:
 
 jobs:
     dry_check:
-        if: github.event.action.edited || github.event.action.opened
+#         if: github.event.action.edited || github.event.action.opened
 
         name: changelog generator dry check
         runs-on: ubuntu-latest
