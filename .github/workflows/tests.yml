@@ -1,6 +1,14 @@
 name: Tests
 
-on: [push, pull_request_target]
+on:
+    push:
+        branches:
+            - develop
+            - master
+    pull_request:
+        branches:
+            - develop
+            - master
 
 jobs:
     perform_test:
