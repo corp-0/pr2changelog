@@ -15,8 +15,9 @@ def main():
         system('echo "::set-output name=generated_changelog::0"')
         return
 
-    Document(c.filename, pr.str_changes)
+    doc = Document(c.filename, pr.str_changes)
     system('echo "::set-output name=generated_changelog::1"')
+    system(f'echo "::set-output name=changelog_content::{doc.raw_text}"')
 
 
 if __name__ == "__main__":
