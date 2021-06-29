@@ -18,6 +18,8 @@ inputs:
 outputs:
     generated_changelog:
         description: "If true, it means we generated a changelog and need to push changes"
+    changelog_content:
+        description: "The actual content of the generated changelog"
 runs:
     using: 'docker'
     image: 'Dockerfile'

@@ -8,12 +8,14 @@ on:
             - edited
 
 jobs:
-    test_desc:
-        if: github.event.action == 'edited'
+    dry_check:
+        if: github.event.pull_request.merged == false
 
-        name: pr desc updated
+        name: changelog generator dry check
         runs-on: ubuntu-latest
+
         steps:
+            -   run: echo testing dry_check
             -   name: Checkout repository
                 uses: actions/checkout@v2
                 with:
@@ -24,14 +26,16 @@ jobs:
                 run: python main.py
                 with:
                     categories: Fix;New;Improvement
+            -   run: echo ${{ steps.pr2changelog.outputs.changelog_content }}
 
-    test_merge:
+    after_merge:
         if: github.event.pull_request.merged == true
 
         name: changelog generator
         runs-on: ubuntu-latest
 
         steps:
+            -   run: echo testing after merge job
             -   name: Checkout repository
                 uses: actions/checkout@v2
                 with:
@@ -42,3 +46,4 @@ jobs:
                 run: python main.py
                 with:
                     categories: Fix;New;Improvement
+            -   run: echo ${{ steps.pr2changelog.outputs.changelog_content }}
