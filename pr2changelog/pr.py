@@ -27,7 +27,7 @@ class Change:
     def styled(self) -> str:
         date = datetime.datetime.today().strftime("%Y/%m/%d")
 
-        return f"* {date}: [{self.category}] {self.desc} by " \
+        return f"* {date}: [{self.category}] {self.desc.strip()} by " \
                f"{Markdown.link(self.author.username, self.author.url)} " \
                f"in PR #{Markdown.link(self.pr_number, self.pr_url)}"
 
@@ -64,7 +64,11 @@ class PR:
 
     @property
     def requires_category(self) -> bool:
-        return len(self.categories) > 0
+        return bool(self.categories)
+
+    @property
+    def str_changes(self):
+        return [c.styled() for c in self.changes]
 
     def __str__(self):
         return f"PR: #{self.number} by {self.author.username}"

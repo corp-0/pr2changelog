@@ -23,3 +23,10 @@ class ChangeLogFileNotFound(BaseError):
             f"{filename} couldn't be found and the configuration is set to don't create the changelog file if it "
             f"isn't found "
         )
+
+
+class MissingContextInformation(BaseError):
+    def __init__(self, info: str):
+        super(MissingContextInformation, self).__init__(
+            f"We're missing critical information from the context: {info}"
+        )
