@@ -2,12 +2,11 @@ name: "pr2changelog"
 author: "Andrés Riquelme <andresfranco.rs@gmail.com>"
 description: "Generates a changelog when a PR is merged based on a short description given by the PR author."
 inputs:
-    repo:
-        description: "Name of this repository in format 'someone/repo'"
-        required: true
-    pr_number:
-        description: "Use github.event.pull_request.number to get the current pr number"
-        required: true
+    categories:
+        description: "List of categories the listed changes should have separated by ';'. note that the search is
+        case-sensitive and if you declare this input, pr2changelog won't log lines without category."
+        required: false
+        default: ""
     change_token:
         description: "Regex will search for this string to find change lines. Default is CL:"
         required: false
@@ -19,6 +18,8 @@ inputs:
 outputs:
     generated_changelog:
         description: "If true, it means we generated a changelog and need to push changes"
+    changelog_content:
+        description: "The actual content of the generated changelog"
 runs:
     using: 'docker'
     image: 'Dockerfile'

@@ -1,0 +1,19 @@
+name: Tests
+
+on: [push, pull_request_target]
+
+jobs:
+    perform_test:
+        name: unittest
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: actions/setup-python@v2
+                with:
+                    python-version: '3.9'
+            -   run: pip install poetry
+            -   run: poetry install
+            -   run: python -m unittest
+
+
