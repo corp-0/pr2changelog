@@ -1,64 +1,47 @@
 import os
+from dataclasses import dataclass, field
+from typing import List
+
+from .exceptions import ChangeLogFileNotFound
 from .markdown import Markdown
-import re
 
 
-def fix_wrong_url(text):
-    wrong_user_patt = r"(https:\/\/api.github.com\/users\/(.+))\)\s"
-    wrong_pr_patt = r"(https:\/\/api.github.com\/repos\/(.+/.+)/pulls/(\d+))"
-
-    user_match = re.search(wrong_user_patt, text)
-    pr_match = re.search(wrong_pr_patt, text)
-
-    if user_match is not None:
-        text = text.replace(user_match.groups()[0], f"https://github.com/{user_match.groups()[1]}")
-
-    if pr_match is not None:
-        text = text.replace(pr_match.groups()[0],
-                            f"https://github.com/{pr_match.groups()[1]}/pull/{pr_match.groups()[2]}")
-
-    return text
-
-
+@dataclass
 class Document:
-    """Object that represents the changelog file and all related operations"""
-    changelog_content: list
-    file_name: str
+    filename: str
+    new_changes: List[str]
+    create: bool = True
+    raw_text: str = field(default="")
+    old_changes: List[str] = field(default_factory=list)
 
-    def __init__(self, filename):
-        self.file_name = filename
-        self.read_file_content()
+    def __post_init__(self):
+        if not os.path.isfile(self.filename):
+            self.handle_missing_file()
+        self.read_old_changes()
+        self.compose_text()
+        self.write_final_doc()
 
-    def read_file_content(self):
-        if not os.path.isfile("CHANGELOG.md"):
-            with open(self.file_name, 'w', encoding='UTF-8'):
-                pass
-            self.changelog_content = [str()]
-        else:
-            with open(self.file_name, 'r', encoding='UTF-8') as f:
-                self.changelog_content = f.readlines()
+    def handle_missing_file(self):
+        if not self.create:
+            raise ChangeLogFileNotFound(self.filename)
+        print(f"{self.filename} couldn't be found but we're creating it now!")
+        f = open(self.filename, 'w', encoding='UTF-8')
+        f.close()
 
-    def add_title(self):
-        self.append_to_file(Markdown.title("CHANGELOG\n---\n\n"))
+    def read_old_changes(self):
+        with open(self.filename, 'r', encoding='UTF-8') as f:
+            self.old_changes = [c.strip("\n") for c in f.readlines() if c.startswith("*")]
 
-    def add_record(self, new_record):
-        self.read_file_content()
-        previous_records = [i for i in self.changelog_content if i and i.startswith("*")]
-        self.clear_file()
-        self.add_title()
+    def compose_text(self):
+        self.raw_text = Markdown.title("CHANGELOG\n---\n\n")
+        for c in self.old_changes:
+            self.raw_text += c + "\n"
+        for n in self.new_changes:
+            self.raw_text += n + "\n"
 
-        self.append_to_file(new_record)
+        if self.raw_text[-1] == "\n":
+            self.raw_text = self.raw_text[:-1]
 
-        if previous_records:
-            for rec in previous_records:
-                if "api.github" in rec:
-                    rec = fix_wrong_url(rec)
-                self.append_to_file(rec)
-
-    def append_to_file(self, text):
-        with open(self.file_name, 'a', encoding='UTF-8') as f:
-            f.write(text)
-
-    def clear_file(self):
-        with open(self.file_name, 'w'):
-            pass
+    def write_final_doc(self):
+        with open(self.filename, "w", encoding="UTF-8") as f:
+            f.write(self.raw_text)
