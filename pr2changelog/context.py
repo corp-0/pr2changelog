@@ -43,7 +43,7 @@ class Context:
         self.body = self.find_body()
         read_payload()
 
-        self.author = Author(username="Username", url="https://api.github.com/users/Codertocat")
+        self.author = self.find_author()
 
     def find_pr(self):
         pr = self.payload.get("pull_request")
@@ -58,8 +58,14 @@ class Context:
 
         return str(pr_number)
 
+    def find_author(self):
+        author_name = self.find_pr().get("user").get("login")
+        author_url = self.find_pr().get("user").get("html_url")
+
+        return Author(author_name, author_url)
+
     def find_url(self):
-        url = self.find_pr().get("url")
+        url = self.find_pr().get("html_url")
         if url is None:
             raise MissingContextInformation("PR url")
 
@@ -71,4 +77,3 @@ class Context:
             raise MissingContextInformation("PR body")
 
         return body
-
