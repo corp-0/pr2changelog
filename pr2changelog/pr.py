@@ -27,7 +27,7 @@ class Change:
     def styled(self) -> str:
         date = datetime.datetime.today().strftime("%Y/%m/%d")
 
-        return f"* {date}: [{self.category}] {self.desc.strip()} by " \
+        return f"* {date}: **[{self.category}]** {self.desc.strip()} by " \
                f"{Markdown.link(self.author.username, self.author.url)} " \
                f"in PR #{Markdown.link(self.pr_number, self.pr_url)}"
 
