@@ -34,10 +34,10 @@ class Document:
 
     def compose_text(self):
         self.raw_text = Markdown.title("CHANGELOG\n---\n\n")
-        for c in self.old_changes:
-            self.raw_text += c + "\n"
         for n in self.new_changes:
             self.raw_text += n + "\n"
+        for c in self.old_changes:
+            self.raw_text += c + "\n"
 
         if self.raw_text[-1] == "\n":
             self.raw_text = self.raw_text[:-1]
