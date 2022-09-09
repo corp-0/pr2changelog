@@ -32,6 +32,21 @@ def find_filename():
     return filename
 
 
+def find_api_secret_token():
+    token = os.getenv("INPUT_API_SECRET_TOKEN", "")
+    return token
+
+
+def find_write_to_file():
+    write = os.getenv("INPUT_WRITE_TO_FILE", "true")
+    return write.lower() == "true"
+
+
+def find_api_url():
+    url = os.getenv("INPUT_API_URL", "")
+    return url
+
+
 class Context:
     def __init__(self):
         self.payload = read_payload()
@@ -41,6 +56,9 @@ class Context:
         self.pr_number = self.find_pr_number()
         self.url = self.find_url()
         self.body = self.find_body()
+        self.api_url = find_api_url()
+        self.api_secret_token = find_api_secret_token()
+        self.write_to_file = find_write_to_file()
         read_payload()
 
         self.author = self.find_author()

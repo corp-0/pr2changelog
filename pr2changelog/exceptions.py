@@ -30,3 +30,10 @@ class MissingContextInformation(BaseError):
         super(MissingContextInformation, self).__init__(
             f"We're missing critical information from the context: {info}"
         )
+
+
+class ApiError(BaseError):
+    def __init__(self, url: str, error: str):
+        super(ApiError, self).__init__(
+            f"The API at {url} resolved with errors: {error}"
+        )

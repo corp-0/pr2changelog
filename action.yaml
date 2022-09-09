@@ -15,6 +15,19 @@ inputs:
         description: "What's the changelog file's name including extension (recommended .md)"
         required: false
         default: "CHANGELOG.md"
+    api_url:
+        description: "URL of the API to use to get the PR's description"
+        required: false
+        default: ""
+    api_secret_token:
+        description: "Secret token to access the API. If not given, this action will not perform any API calls."
+        required: false
+        default: ""
+    write_to_file:
+        description: "If true, the changelog will be written to the file specified in file_name. If false, the changelog
+        will be printed to the console."
+        required: false
+        default: "true"
 outputs:
     generated_changelog:
         description: "If true, it means we generated a changelog and need to push changes"
