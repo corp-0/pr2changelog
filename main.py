@@ -12,7 +12,7 @@ def main():
     pr.parse_body()
 
     if not pr.changes:
-        print("PR has no changes worthy enough to mention in changelog, skipping :)")
+        print("PR has no changes skipping :)")
         system('echo "::set-output name=generated_changelog::0"')
         return
 

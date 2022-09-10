@@ -5,6 +5,7 @@ from typing import List
 
 from .exceptions import MissingCategory, InvalidCategory
 from .markdown import Markdown
+from os import system
 
 
 @dataclass
@@ -49,6 +50,7 @@ class PR:
     def parse_body(self):
         matches = re.finditer(self.regex.format(self.change_token), self.body, re.MULTILINE)
         for m in matches:
+            system(f'echo "Found change: {m.string}')
             cat = m.groups()[1]
             if cat:
                 cat = cat.replace("[", "").replace("]", "")
