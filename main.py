@@ -28,6 +28,8 @@ def main():
         system('echo "We are registering the changes in the changelog api!"')
         caller = ApiCaller(c.api_url, c.api_secret_token, pr)
         caller.post_changes()
+        system('echo "::set-output name=generated_changelog::1"')
+        system(f'echo "::set-output name=changelog_content::{pr.str_changes}')
 
 
 if __name__ == "__main__":
