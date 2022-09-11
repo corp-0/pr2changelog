@@ -33,6 +33,7 @@ class ApiCaller:
             "pr_number": self.pr.number,
             "pr_url": self.pr.url,
             "category": change.category.upper(),
+            "description": change.desc,
             "secret_token": self.api_token,
         }
 
