@@ -16,7 +16,7 @@ inputs:
         required: false
         default: "CHANGELOG.md"
     api_url:
-        description: "URL of the API to use to get the PR's description"
+        description: "URL of the API to use to get the PR's description. If not given, this action will not perform any API calls"
         required: false
         default: ""
     api_secret_token:
