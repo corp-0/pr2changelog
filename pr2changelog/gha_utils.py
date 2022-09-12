@@ -1,7 +1,8 @@
 import os
-import enum
+from enum import Enum
 
-class GhaMessageLevel(enum):
+
+class GhaMessageLevel(Enum):
     DEBUG = 0
     INFO = 1
     WARNING = 2
@@ -46,7 +47,7 @@ def gha_set_output(name: str, value: any):
     os.system(f'echo "::set-output name={name}::{str(value)}"')
 
 
-def gha_notice(file:str, line:int, end_line: int, title: str, message: any):
+def gha_notice(file: str, line: int, end_line: int, title: str, message: any):
     os.system(f'echo "::notice file={file},line={line},endLine={end_line},title={title}::{message}"')
 
 
