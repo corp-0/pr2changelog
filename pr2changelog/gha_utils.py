@@ -9,7 +9,7 @@ class GhaMessageLevel(Enum):
     ERROR = 3
 
 
-def gha_message(message: any, level: int = GhaMessageLevel.INFO):
+def gha_message(message: any, level: GhaMessageLevel = GhaMessageLevel.INFO):
     print(message)
 
     match level:
