@@ -49,6 +49,7 @@ class PR:
 
     def parse_body(self):
         gha_debug(f"Parsing PR body for {self}")
+        gha_debug(self.body)
 
         matches = re.finditer(self.regex.format(self.change_token), self.body, re.MULTILINE)
         if not matches:
