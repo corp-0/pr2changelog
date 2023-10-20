@@ -30,12 +30,14 @@ class Document:
         if not self.create:
             raise ChangeLogFileNotFound(self.filename)
         print(f"{self.filename} couldn't be found but we're creating it now!")
-        f = open(self.filename, 'w', encoding='UTF-8')
+        f = open(self.filename, "w", encoding="UTF-8")
         f.close()
 
     def read_old_changes(self):
-        with open(self.filename, 'r', encoding='UTF-8') as f:
-            self.old_changes = [c.strip("\n") for c in f.readlines() if c.startswith("*")]
+        with open(self.filename, "r", encoding="UTF-8") as f:
+            self.old_changes = [
+                c.strip("\n") for c in f.readlines() if c.startswith("*")
+            ]
 
     def compose_text(self):
         self.raw_text = Markdown.title("CHANGELOG\n---\n\n")
