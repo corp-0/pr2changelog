@@ -15,22 +15,29 @@ class Document:
     old_changes: List[str] = field(default_factory=list)
 
     def __post_init__(self):
-        if not os.path.isfile(self.filename):
-            self.handle_missing_file()
-        self.read_old_changes()
-        self.compose_text()
-        self.write_final_doc()
+        try:
+            if not os.path.isfile(self.filename):
+                self.handle_missing_file()
+            self.read_old_changes()
+            self.compose_text()
+            self.write_final_doc()
+        except ChangeLogFileNotFound as e:
+            if "skipped" in str(e):
+                print("Changelog generation was skipped.")
+                return
 
     def handle_missing_file(self):
         if not self.create:
             raise ChangeLogFileNotFound(self.filename)
         print(f"{self.filename} couldn't be found but we're creating it now!")
-        f = open(self.filename, 'w', encoding='UTF-8')
+        f = open(self.filename, "w", encoding="UTF-8")
         f.close()
 
     def read_old_changes(self):
-        with open(self.filename, 'r', encoding='UTF-8') as f:
-            self.old_changes = [c.strip("\n") for c in f.readlines() if c.startswith("*")]
+        with open(self.filename, "r", encoding="UTF-8") as f:
+            self.old_changes = [
+                c.strip("\n") for c in f.readlines() if c.startswith("*")
+            ]
 
     def compose_text(self):
         self.raw_text = Markdown.title("CHANGELOG\n---\n\n")
