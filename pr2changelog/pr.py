@@ -3,6 +3,7 @@ import re
 from dataclasses import dataclass, field
 from typing import List
 
+from pr2changelog.gha_utils import gha_debug, gha_error
 from .exceptions import MissingCategory, InvalidCategory
 from .markdown import Markdown
 
@@ -44,23 +45,33 @@ class PR:
     body: str
     categories: List[str] = field(default_factory=list)
     changes: List[Change] = field(default_factory=list)
-    regex = r"^({}):\s?(\[\w+\])?(.*)$"
+    regex = r"^({}):\s?(\[\w+\])?(.+)$"
 
     def parse_body(self):
+        gha_debug(f"Parsing PR body for {self}")
+        gha_debug(self.body)
+
         matches = re.finditer(self.regex.format(self.change_token), self.body, re.MULTILINE)
+        if not matches:
+            gha_debug(f"Regex expression: {self.regex.format(self.change_token)} found no matches!")
+
         for m in matches:
             cat = m.groups()[1]
             if cat:
+                gha_debug(f"Found category: {cat}")
                 cat = cat.replace("[", "").replace("]", "")
             desc = m.groups()[2]
 
             if self.requires_category and not cat:
+                gha_error(f"Missing category for change: {desc}")
                 raise MissingCategory(m.string)
             if self.requires_category and cat not in self.categories:
+                gha_error(f"Invalid category: {cat} for change: {desc}")
                 raise InvalidCategory(cat, self.categories)
 
-            c = Change(self.author, desc, self.number, self.url, cat)
-            self.changes.append(c)
+            change = Change(self.author, desc, self.number, self.url, cat)
+            gha_debug(f"Built change object from PR body: {change}")
+            self.changes.append(change)
 
     @property
     def requires_category(self) -> bool:
