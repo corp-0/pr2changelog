@@ -62,5 +62,14 @@ class PRTest(TestCase):
             self.assertEqual(pr.changes[0].category, "Wrong")
 
 
+    def test_skip_token_in_description(self):
+        with mock.patch.dict(self.test_data, {"body": "__skipcl__"}):
+            pr = PR(**self.test_data)
+            pr.parse_body()
+            self.assertTrue(pr.skipped)
+            with self.assertRaises(ChangeLogFileNotFound) as cm:
+                pr.create_changelog()
+            self.assertEqual(str(cm.exception), "Changelog generation was skipped.")
+
 if __name__ == '__main__':
     unittest.main()
