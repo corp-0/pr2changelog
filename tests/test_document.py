@@ -42,6 +42,37 @@ class DocumentTest(unittest.TestCase):
         doc = Document(**self.data)
         self.assertEqual(self.result2, doc.raw_text)
 
+    def test_skip_token_in_description(self):
+        from pr2changelog.pr import PR
+        from io import StringIO
+        import sys
+
+        test_pr = PR(**{
+            "number": 1234,
+            "title": "Test PR",
+            "body": "__skipcl__",
+            "user": {"login": "username", "html_url": "https://url.com/username"},
+            "html_url": "https://url.com/username/repo/pulls/1234",
+            "merge_commit_sha": "abcd1234",
+            "head": {"ref": "branch-name"},
+            "base": {"ref": "main"},
+            "merged_at": "2022-01-01T00:00:00Z",
+            "labels": [{"name": "skip-changelog"}]
+        })
+        test_pr.parse_body()
+
+        old_stdout = sys.stdout
+        sys.stdout = new_stdout = StringIO()
+
+        with self.assertRaises(ChangeLogFileNotFound) as cm:
+            Document(pr=test_pr, **self.data)
+
+        output = new_stdout.getvalue()
+        sys.stdout = old_stdout
+
+        self.assertEqual(str(cm.exception), "Changelog generation was skipped.")
+        self.assertIn("Changelog generation was skipped.", output)
+
     def tearDown(self) -> None:
         if os.path.isfile(".mockUpFile"):
             os.remove(".mockUpFile")
