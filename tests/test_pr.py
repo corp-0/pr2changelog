@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase, mock
 
-from pr2changelog.exceptions import MissingCategory, InvalidCategory
+from pr2changelog.exceptions import MissingCategory, InvalidCategory, ChangeLogFileNotFound
 from pr2changelog.pr import Author, PR
 
 
