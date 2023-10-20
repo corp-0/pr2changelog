@@ -1,8 +1,12 @@
 import unittest
 from unittest import TestCase, mock
 
-from pr2changelog.exceptions import MissingCategory, InvalidCategory, ChangeLogFileNotFound
-from pr2changelog.pr import Author, PR
+from pr2changelog.exceptions import (
+    ChangeLogFileNotFound,
+    InvalidCategory,
+    MissingCategory,
+)
+from pr2changelog.pr import PR, Author
 
 
 class PRTest(TestCase):
@@ -12,7 +16,7 @@ class PRTest(TestCase):
         "number": "1234",
         "url": "https://url.com/username/repo/pulls/1234",
         "change_token": "CL",
-        "body": "CL: [Fix] fixed a bug"
+        "body": "CL: [Fix] fixed a bug",
     }
     body_multiple = "CL:[Fix] fixed a bug\nCL: improved a thing\nCL:[New] added a thing"
     categories = ["Fix", "Improve", "New"]
@@ -41,17 +45,24 @@ class PRTest(TestCase):
             self.fail("Category was not required. We shouldn't have raised exception.")
 
     def test_change_missing_required_category(self):
-        with mock.patch.dict(self.test_data, {"body": "CL: fixed a bug", "categories": self.categories}):
+        with mock.patch.dict(
+            self.test_data, {"body": "CL: fixed a bug", "categories": self.categories}
+        ):
             pr = PR(**self.test_data)
             self.assertRaises(MissingCategory, pr.parse_body)
 
     def test_changes_1_missing_required_category(self):
-        with mock.patch.dict(self.test_data, {"body": self.body_multiple, "categories": self.categories}):
+        with mock.patch.dict(
+            self.test_data, {"body": self.body_multiple, "categories": self.categories}
+        ):
             pr = PR(**self.test_data)
             self.assertRaises(MissingCategory, pr.parse_body)
 
     def test_invalid_category(self):
-        with mock.patch.dict(self.test_data, {"body": "CL: [Wrong] wrong category", "categories": self.categories}):
+        with mock.patch.dict(
+            self.test_data,
+            {"body": "CL: [Wrong] wrong category", "categories": self.categories},
+        ):
             pr = PR(**self.test_data)
             self.assertRaises(InvalidCategory, pr.parse_body)
 
@@ -60,7 +71,6 @@ class PRTest(TestCase):
             pr = PR(**self.test_data)
             pr.parse_body()
             self.assertEqual(pr.changes[0].category, "Wrong")
-
 
     def test_skip_token_in_description(self):
         with mock.patch.dict(self.test_data, {"body": "__skipcl__"}):
@@ -71,5 +81,6 @@ class PRTest(TestCase):
                 pr.create_changelog()
             self.assertEqual(str(cm.exception), "Changelog generation was skipped.")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
