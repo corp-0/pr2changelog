@@ -9,8 +9,6 @@ rules:
 - "Avoid using `import pdb; pdb.set_trace()` in production code."
 - "Avoid using debug log or print statements in production code."
 - "Ensure that code follows consistent styling and formatting."
-- "All commits should follow conventional commits style."
-- "All PR titles should also follow conventional commits style."
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
 branch: 'main'
@@ -23,7 +21,7 @@ gha_enabled: True
 # Example:
 #
 # description: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: ''
+description: 'PR2Changelog is a github action that will read the a PR body and evaluate if it needs to write any changelog into a file/API.'
 
 # This sets whether to create pull requests as drafts. If this is set to True, then all pull requests will be created as drafts and GitHub Actions will not be triggered.
 draft: False
