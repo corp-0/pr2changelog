@@ -5,7 +5,7 @@ from typing import List
 
 from pr2changelog.gha_utils import gha_debug, gha_error
 
-from .exceptions import InvalidCategory, MissingCategory
+from .exceptions import InvalidCategory, MissingCategory, ChangeLogFileNotFound
 from .markdown import Markdown
 
 
@@ -46,6 +46,7 @@ class PR:
     url: str
     change_token: str
     body: str
+    skipped: bool = False
     categories: List[str] = field(default_factory=list)
     changes: List[Change] = field(default_factory=list)
     regex = r"^({}):\s?(\[\w+\])?(.+)$"
