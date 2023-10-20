@@ -5,7 +5,7 @@ from typing import List
 
 from pr2changelog.gha_utils import gha_debug, gha_error
 
-from .exceptions import InvalidCategory, MissingCategory, ChangeLogFileNotFound
+from .exceptions import InvalidCategory, MissingCategory
 from .markdown import Markdown
 
 
