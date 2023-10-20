@@ -15,11 +15,16 @@ class Document:
     old_changes: List[str] = field(default_factory=list)
 
     def __post_init__(self):
-        if not os.path.isfile(self.filename):
-            self.handle_missing_file()
-        self.read_old_changes()
-        self.compose_text()
-        self.write_final_doc()
+        try:
+            if not os.path.isfile(self.filename):
+                self.handle_missing_file()
+            self.read_old_changes()
+            self.compose_text()
+            self.write_final_doc()
+        except ChangeLogFileNotFound as e:
+            if "skipped" in str(e):
+                print("Changelog generation was skipped.")
+                return
 
     def handle_missing_file(self):
         if not self.create:
