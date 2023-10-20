@@ -9,9 +9,11 @@ rules:
 - "Avoid using `import pdb; pdb.set_trace()` in production code."
 - "Avoid using debug log or print statements in production code."
 - "Ensure that code follows consistent styling and formatting."
+- "All commits should follow conventional commits style."
+- "All PR titles should also follow conventional commits style."
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
-branch: 'api-integration'
+branch: 'main'
 
 # By default Sweep will read the logs and outputs from your existing Github Actions. To disable this, set this to false.
 gha_enabled: True
