@@ -33,7 +33,7 @@ class MissingContextInformation(BaseError):
 
 
 class ApiError(BaseError):
-    def __init__(self, url: str, error: str):
+    def __init__(self, error: str):
         super(ApiError, self).__init__(
-            f"The API at {url} resolved with errors: {error}"
+            f"API request failed: {error}"
         )

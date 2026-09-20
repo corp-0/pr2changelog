@@ -17,16 +17,18 @@ jobs:
         steps:
             -   run: echo testing dry_check
             -   name: Checkout repository
-                uses: actions/checkout@v2
+                uses: actions/checkout@v7
                 with:
                     fetch-depth: 0
 
             -   name: pr2changelog
                 id: pr2changelog
-                run: python main.py
+                uses: ./
                 with:
                     categories: Fix;New;Improvement
-            -   run: echo ${{ steps.pr2changelog.outputs.changelog_content }}
+            -   run: printf '%s\n' "$CHANGELOG_CONTENT"
+                env:
+                    CHANGELOG_CONTENT: ${{ steps.pr2changelog.outputs.changelog_content }}
 
     after_merge:
         if: github.event.pull_request.merged == true
@@ -37,13 +39,15 @@ jobs:
         steps:
             -   run: echo testing after merge job
             -   name: Checkout repository
-                uses: actions/checkout@v2
+                uses: actions/checkout@v7
                 with:
                     fetch-depth: 0
 
             -   name: pr2changelog
                 id: pr2changelog
-                run: python main.py
+                uses: ./
                 with:
                     categories: Fix;New;Improvement
-            -   run: echo ${{ steps.pr2changelog.outputs.changelog_content }}
+            -   run: printf '%s\n' "$CHANGELOG_CONTENT"
+                env:
+                    CHANGELOG_CONTENT: ${{ steps.pr2changelog.outputs.changelog_content }}

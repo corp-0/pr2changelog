@@ -48,7 +48,7 @@ def find_change_token():
 
 def find_filename():
     gha_debug("Reading filename from settings")
-    filename = os.getenv("INPUT_FILENAME", "CHANGELOG.md")
+    filename = os.getenv("INPUT_FILE_NAME", os.getenv("INPUT_FILENAME", "CHANGELOG.md"))
     gha_debug(f"Found filename: {filename}")
     return filename
 
@@ -71,7 +71,7 @@ def find_write_to_file():
 def find_api_url():
     gha_debug("Reading API URL from settings")
     url = os.getenv("INPUT_API_URL", "")
-    gha_debug(f"Found API URL: {url}")
+    gha_debug("Found API URL: ***" if url else "API URL not configured")
     return url
 
 

@@ -29,16 +29,18 @@ class ApiCaller:
             gha_debug(f"Attempting to post change: {change}")
 
             data = self.build_post_data(change)
-            response = requests.post(self.url, data=data)
-            gha_debug(f"got response: {response}")
             try:
+                response = requests.post(self.url, data=data)
+                gha_debug(f"got response: {response}")
                 response.raise_for_status()
-            except requests.exceptions.HTTPError:
+            except requests.exceptions.HTTPError as error:
                 gha_error(f"Error posting change: {change}")
-                raise ApiError(self.url, response.json())
-            except Exception as e:
+                status = error.response.status_code if error.response is not None else "unknown"
+                raise ApiError(f"HTTP {status}") from None
+            except requests.exceptions.RequestException as error:
                 gha_error(f"Error posting change: {change}")
-                raise ApiError(self.url, f"Unknown error: {e}\n{response.json()}")
+                # Request exception messages and chained tracebacks can contain the endpoint.
+                raise ApiError(type(error).__name__) from None
 
     def build_post_data(self, change: Change) -> dict:
         gha_debug("Building post data")
@@ -50,8 +52,7 @@ class ApiCaller:
             "pr_url": self.pr.url,
             "category": change.category.upper(),
             "description": change.desc,
-            "secret_token": self.api_token,
         }
         gha_debug(f"Post data: {data}")
-
+        data["secret_token"] = self.api_token
         return data

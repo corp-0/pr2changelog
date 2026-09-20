@@ -14,14 +14,30 @@ jobs:
     perform_test:
         name: unittest
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
 
         steps:
-            -   uses: actions/checkout@v2
-            -   uses: actions/setup-python@v2
+            -   uses: actions/checkout@v7
+            -   uses: astral-sh/setup-uv@v10
                 with:
-                    python-version: '3.9'
-            -   run: pip install poetry
-            -   run: poetry install
-            -   run: python -m unittest
-
-
+                    version: '0.12.17'
+                    python-version: '3.14'
+                    enable-cache: true
+            -   run: uv sync --locked
+            -   run: uv run --locked python -m unittest discover -v
+            -   run: uv build
+            -   run: docker build -t pr2changelog:test .
+            -   name: Test Docker action
+                run: |
+                    mkdir -p "$RUNNER_TEMP/pr2changelog"
+                    cp tests/data/merged.json "$RUNNER_TEMP/pr2changelog/event.json"
+                    touch "$RUNNER_TEMP/pr2changelog/output"
+                    docker run --rm \
+                        -v "$RUNNER_TEMP/pr2changelog:/github/workspace" \
+                        -w /github/workspace \
+                        -e GITHUB_EVENT_PATH=/github/workspace/event.json \
+                        -e GITHUB_OUTPUT=/github/workspace/output \
+                        pr2changelog:test
+                    test -s "$RUNNER_TEMP/pr2changelog/CHANGELOG.md"
+                    grep -q '^changelog_content<<' "$RUNNER_TEMP/pr2changelog/output"

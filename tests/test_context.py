@@ -70,6 +70,14 @@ class ContextTest(unittest.TestCase):
     def test_body(self):
         self.assertEqual(body, Context().body)
 
+    @mock.patch.dict(os.environ, {"INPUT_FILE_NAME": "custom.md", "INPUT_FILENAME": "legacy.md"})
+    def test_file_name_input(self):
+        self.assertEqual("custom.md", Context().filename)
+
+    @mock.patch.dict(os.environ, {"INPUT_FILENAME": "legacy.md"})
+    def test_legacy_filename_input(self):
+        self.assertEqual("legacy.md", Context().filename)
+
 
 if __name__ == '__main__':
     unittest.main()

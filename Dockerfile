@@ -1,17 +1,20 @@
-FROM python:3
+FROM python:3.14-slim
+
+COPY --from=ghcr.io/astral-sh/uv:0.12.17 /uv /usr/local/bin/uv
 
 ENV   PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
   PYTHONHASHSEED=random \
-  PIP_NO_CACHE_DIR=off \
-  PIP_DISABLE_PIP_VERSION_CHECK=on \
-  PIP_DEFAULT_TIMEOUT=100
+  UV_PYTHON_DOWNLOADS=never \
+  UV_HTTP_TIMEOUT=100
 
-RUN pip install poetry
+WORKDIR /app
 
-COPY . /.
+COPY pyproject.toml uv.lock .python-version ./
 
-RUN poetry config virtualenvs.create false \
-  && poetry install
+RUN uv sync --locked --no-dev --no-install-project --no-cache
 
-CMD ["python", "/main.py"]
+COPY main.py ./
+COPY pr2changelog ./pr2changelog
+
+ENTRYPOINT ["/app/.venv/bin/python", "/app/main.py"]

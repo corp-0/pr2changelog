@@ -78,7 +78,7 @@ class PR:
         return bool(self.categories)
 
     @property
-    def str_changes(self):
+    def str_changes(self) -> list[str]:
         return [c.styled() for c in self.changes]
 
     def __str__(self):
