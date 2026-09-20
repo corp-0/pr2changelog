@@ -61,6 +61,37 @@ class PRTest(TestCase):
             pr.parse_body()
             self.assertEqual(pr.changes[0].category, "Wrong")
 
+    def test_nocl_skips_parsing_and_category_validation(self):
+        bodies = [
+            "[NOCL]",
+            "Documentation only [NOCL], no user-facing changes.",
+            "CL: [Fix] fixed a bug\n[NOCL]",
+            "CL: [Wrong] invalid category\n[NOCL]",
+            "CL: missing category\n[NOCL]",
+        ]
+        for body in bodies:
+            with self.subTest(body=body):
+                pr = PR(**{**self.test_data, "body": body, "categories": self.categories})
+                pr.parse_body()
+                self.assertTrue(pr.skip_changelog)
+                self.assertEqual([], pr.changes)
+
+    def test_skip_token_is_literal_and_case_sensitive(self):
+        for token in ("NOCL", "[nocl]", "[NOCL_EXTRA]"):
+            with self.subTest(token=token):
+                pr = PR(**{**self.test_data, "body": f"{token}\nCL: [Fix] fixed a bug"})
+                pr.parse_body()
+                self.assertFalse(pr.skip_changelog)
+                self.assertEqual(1, len(pr.changes))
+
+    def test_blank_body_skips_parsing(self):
+        for body in ("", " ", "\r\n\t "):
+            with self.subTest(body=body):
+                pr = PR(**{**self.test_data, "body": body, "categories": self.categories})
+                pr.parse_body()
+                self.assertTrue(pr.skip_changelog)
+                self.assertEqual([], pr.changes)
+
 
 if __name__ == '__main__':
     unittest.main()

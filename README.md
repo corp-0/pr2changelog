@@ -58,6 +58,28 @@ Now add the changelog short description to your PRS like this
 
 Every line in the PR body that starts with ``CL:`` will be considered to be a change mentioned in the changelog.
 
+Add `[NOCL]` anywhere in the PR body to explicitly skip changelog generation.
+The token is case-sensitive and takes precedence over all `CL:` lines, including
+lines with missing or invalid categories. The action succeeds without requiring
+changelog lines, writing a changelog file, or posting changes to the API.
+
+A missing, null, empty, or whitespace-only PR body also skips changelog generation.
+A nonempty body without `[NOCL]` still goes through normal parsing and validation.
+
+When skipped, the outputs are `skip_changelog=1`, `found_changes=0`,
+`generated_changelog=0`, and an empty `changelog_content`. Otherwise,
+`skip_changelog=0` and normal changelog processing applies.
+
+A downstream step can distinguish a skipped changelog from missing lines in a nonempty body:
+
+```yml
+- name: Require changelog lines unless explicitly skipped
+  if: steps.pr2changelog.outputs.skip_changelog != '1' && steps.pr2changelog.outputs.found_changes != '1'
+  run: |
+    echo "::error::Add CL: lines or [NOCL] to the PR body."
+    exit 1
+```
+
 Inputs:
 
 

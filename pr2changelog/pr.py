@@ -51,6 +51,9 @@ class PR:
         gha_debug(f"Parsing PR body for {self}")
         gha_debug(self.body)
 
+        if self.skip_changelog:
+            return
+
         matches = re.finditer(self.regex.format(self.change_token), self.body, re.MULTILINE)
         if not matches:
             gha_debug(f"Regex expression: {self.regex.format(self.change_token)} found no matches!")
@@ -72,6 +75,10 @@ class PR:
             change = Change(self.author, desc, self.number, self.url, cat)
             gha_debug(f"Built change object from PR body: {change}")
             self.changes.append(change)
+
+    @property
+    def skip_changelog(self) -> bool:
+        return not self.body.strip() or "[NOCL]" in self.body
 
     @property
     def requires_category(self) -> bool:

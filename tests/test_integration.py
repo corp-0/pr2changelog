@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import tempfile
 import traceback
@@ -40,6 +41,7 @@ class IntegrationTest(unittest.TestCase):
     def test_default_options(self):
         main.main()
         outputs = self.read_outputs()
+        self.assertEqual("0", outputs["skip_changelog"])
         self.assertEqual("1", outputs["found_changes"])
         self.assertEqual("1", outputs["generated_changelog"])
         self.assertEqual(self.changelog.read_text(), outputs["changelog_content"])
@@ -56,9 +58,49 @@ class IntegrationTest(unittest.TestCase):
     @mock.patch.dict(os.environ, {"INPUT_CHANGE_TOKEN": "NO_CHANGES"})
     def test_without_changes(self):
         main.main()
-        self.assertEqual({"found_changes": "0", "generated_changelog": "0"},
+        self.assertEqual({"skip_changelog": "0", "found_changes": "0", "generated_changelog": "0"},
                          self.read_outputs())
         self.assertFalse(self.changelog.exists())
+
+    @mock.patch("pr2changelog.api_caller.requests.post")
+    @mock.patch.dict(os.environ, {
+        "INPUT_API_URL": "https://example.com/changelog",
+        "INPUT_API_SECRET_TOKEN": "test-secret",
+        "INPUT_CATEGORIES": "Fix;New;Improvement",
+    })
+    def test_skips_file_and_api_without_missing_changes_warning(self, post):
+        for body_fields in ({"body": "[NOCL]"}, {"body": "CL: [Fix] ignored change\n[NOCL]"},
+                            {"body": "CL: [Wrong] ignored invalid category\n[NOCL]"},
+                            {}, {"body": None}, {"body": ""}, {"body": "\r\n\t "}):
+            for existing_file in (False, True):
+                with self.subTest(body_fields=body_fields, existing_file=existing_file):
+                    self.changelog.unlink(missing_ok=True)
+                    if existing_file:
+                        self.changelog.write_text("Existing changelog\n")
+                    self.output.write_text("")
+                    payload = json.loads(Path("tests/data/merged.json").read_text())
+                    payload["pull_request"].pop("body", None)
+                    payload["pull_request"].update(body_fields)
+                    event = self.directory / "event.json"
+                    event.write_text(json.dumps(payload))
+                    stdout = io.StringIO()
+                    with mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(event)}), redirect_stdout(stdout):
+                        main.main()
+                    self.assertEqual({
+                        "skip_changelog": "1",
+                        "found_changes": "0",
+                        "generated_changelog": "0",
+                        "changelog_content": "",
+                    }, self.read_outputs())
+                    self.assertNotIn("::warning::", stdout.getvalue())
+                    self.assertNotIn("::error::", stdout.getvalue())
+                    if not (body_fields.get("body") or "").strip():
+                        self.assertIn("PR body is empty: skipping changelog generation", stdout.getvalue())
+                        self.assertNotIn("[NOCL] found", stdout.getvalue())
+                    self.assertEqual(existing_file, self.changelog.exists())
+                    if existing_file:
+                        self.assertEqual("Existing changelog\n", self.changelog.read_text())
+                    post.assert_not_called()
 
     @mock.patch("pr2changelog.api_caller.requests.post")
     @mock.patch.dict(os.environ, {

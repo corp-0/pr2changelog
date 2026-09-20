@@ -118,9 +118,6 @@ class Context:
 
         return url
 
-    def find_body(self):
+    def find_body(self) -> str:
         body = self.find_pr().get("body")
-        if body is None:
-            raise MissingContextInformation("PR body")
-
-        return body
+        return "" if body is None else body

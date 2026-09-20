@@ -29,6 +29,17 @@ def main():
 
 def check_found_changes(pr: PR) -> bool:
     gha_debug("Checking if changes were found")
+    gha_set_output("skip_changelog", int(pr.skip_changelog))
+
+    if pr.skip_changelog:
+        if not pr.body.strip():
+            gha_print("PR body is empty: skipping changelog generation")
+        else:
+            gha_print("[NOCL] found: skipping changelog generation")
+        gha_set_output("found_changes", 0)
+        gha_set_output("generated_changelog", 0)
+        gha_set_output("changelog_content", "")
+        return False
 
     if not pr.changes:
         gha_warning("No changes found in PR body")

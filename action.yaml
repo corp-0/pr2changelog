@@ -29,12 +29,14 @@ inputs:
         required: false
         default: "true"
 outputs:
+    skip_changelog:
+        description: "1 when the PR body is missing, null, blank, or contains [NOCL]; otherwise 0."
     generated_changelog:
         description: "If true, it means we generated a changelog and need to push changes"
     changelog_content:
         description: "The actual content of the generated changelog"
     found_changes:
-        description: "If true, it means we found changes in the PR description"
+        description: "1 when changelog lines were parsed; 0 when none were found or changelog parsing was skipped."
 runs:
     using: 'docker'
     image: 'Dockerfile'

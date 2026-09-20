@@ -70,6 +70,20 @@ class ContextTest(unittest.TestCase):
     def test_body(self):
         self.assertEqual(body, Context().body)
 
+    def test_absent_body_becomes_empty_string(self):
+        for body_fields in ({}, {"body": None}, {"body": ""}):
+            with self.subTest(body_fields=body_fields):
+                payload = pr2changelog.context.read_payload()
+                payload["pull_request"].pop("body", None)
+                payload["pull_request"].update(body_fields)
+                with mock.patch.object(pr2changelog.context, "read_payload", return_value=payload):
+                    self.assertEqual("", Context().body)
+
+    def test_missing_pull_request_still_fails(self):
+        with mock.patch.object(pr2changelog.context, "read_payload", return_value={"number": 2}):
+            with self.assertRaises(MissingContextInformation):
+                Context()
+
     @mock.patch.dict(os.environ, {"INPUT_FILE_NAME": "custom.md", "INPUT_FILENAME": "legacy.md"})
     def test_file_name_input(self):
         self.assertEqual("custom.md", Context().filename)
