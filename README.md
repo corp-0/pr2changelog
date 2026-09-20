@@ -87,6 +87,18 @@ Inputs:
 |----------|-------------|------|
 | change_token |  The string we will find in your PR body to determine if the line describes a change | "CL:" |
 | file_name |    Name of the changelog file, including extension   |   "CHANGELOG.md" |
+| comment_on_pr | Manage a warning comment on the PR | "false" |
+| github_token | GitHub token used for PR comments | "" |
+
+To enable built-in comments, give the workflow `pull-requests: write` permission
+and pass these inputs:
+
+```yml
+comment_on_pr: true
+github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The action creates or updates one warning for missing or invalid changelog lines.
 
 The Docker action runs Python 3.14; consuming workflows do not need to install Python.
 Outputs use GitHub's `GITHUB_OUTPUT` file, including multiline changelog content.

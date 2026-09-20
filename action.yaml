@@ -28,6 +28,14 @@ inputs:
         will be printed to the console."
         required: false
         default: "true"
+    comment_on_pr:
+        description: "Manage a PR warning comment for missing or invalid changelog lines and generation failures."
+        required: false
+        default: "false"
+    github_token:
+        description: "GITHUB_TOKEN with pull-requests: write permission, required when comment_on_pr is true."
+        required: false
+        default: ""
 outputs:
     skip_changelog:
         description: "1 when the PR body is missing, null, blank, or contains [NOCL]; otherwise 0."

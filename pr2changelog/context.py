@@ -88,6 +88,14 @@ class Context:
         self.api_url = find_api_url()
         self.api_secret_token = find_api_secret_token()
         self.write_to_file = find_write_to_file()
+        self.comment_on_pr = os.getenv("INPUT_COMMENT_ON_PR", "false").lower() == "true"
+        self.github_token = os.getenv("INPUT_GITHUB_TOKEN", "")
+        self.github_api_url = os.getenv("GITHUB_API_URL", "https://api.github.com")
+        self.repository = os.getenv("GITHUB_REPOSITORY", "")
+        self.merged = self.find_pr().get("merged") is True
+        run_id = os.getenv("GITHUB_RUN_ID", "")
+        server_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
+        self.run_url = f"{server_url}/{self.repository}/actions/runs/{run_id}" if run_id and self.repository else ""
         read_payload()
 
         self.author = self.find_author()
